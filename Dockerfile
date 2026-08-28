@@ -1,24 +1,40 @@
-# Stage 1: Build the application using Gradle
-FROM gradle:8.5-jdk21 AS build
+# ==========================================
+# Stage 1: Build application using Gradle
+# ==========================================
+FROM gradle:8.5-jdk21-alpine AS builder
+
 WORKDIR /app
-COPY --chown=gradle:gradle . .
-RUN chmod +x gradlew
+
+# Copy Gradle wrapper and configuration files first to leverage layer caching
+COPY gradlew .
+COPY gradle gradle
+COPY build.gradle settings.gradle ./
+
+# Grant execution rights and pre-fetch dependencies
+RUN chmod +x gradlew && ./gradlew dependencies --no-daemon
+
+# Copy source code and build executable jar
+COPY src src
 RUN ./gradlew bootJar -x test --no-daemon
 
-# Stage 2: Run the application
+# ==========================================
+# Stage 2: Runtime image (Alpine JRE)
+# ==========================================
 FROM eclipse-temurin:21-jre-alpine
+
 WORKDIR /app
 
-# Copy the built jar from the build stage
-COPY --from=build /app/build/libs/*.jar app.jar
+# Security: Create non-root user and group
+RUN addgroup -S daonbmgroup && adduser -S daonbm -G daonbmgroup
 
-# Expose the API port
-EXPOSE 8080
+# Copy built JAR from builder stage and assign ownership
+COPY --from=builder --chown=daonbm:daonbmgroup /app/build/libs/*.jar app.jar
 
-# Environment variables for MySQL connection (can be overridden at runtime)
-ENV DB_URL=jdbc:mysql://db:3306/taskdb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-ENV DB_USER=root
-ENV DB_PASS=root
+# Switch to non-root user
+USER daonbm
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Expose application port
+EXPOSE 8083
 
+# Recommended JVM flags for containerized environment
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]
