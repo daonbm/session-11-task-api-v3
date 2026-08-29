@@ -123,7 +123,7 @@ jobs:
             EOF
 
             echo "Stopping old containers..."
-            docker compose down --remove-orphans || true
+            docker compose down --remove-orphans
 
             echo "Pulling latest Docker image..."
             docker compose pull
