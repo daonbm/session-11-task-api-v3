@@ -9,7 +9,7 @@ services:
       DB_USER: ${DB_USER}
       DB_PASS: ${DB_PASS}
     ports:
-      - "127.0.0.1:${DB_PORT}"
+      - "127.0.0.1:${DB_PORT:-3306}:3306"
     volumes:
       - db-data:/var/lib/mysql
       - ./src/main/resources/db/taskdb.sql:/docker-entrypoint-initdb.d/taskdb.sql

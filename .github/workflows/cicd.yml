@@ -123,9 +123,9 @@ jobs:
             EOF
 
             echo "Pulling latest Docker image..."
-            docker compose pull || docker-compose pull
+            docker compose pull
 
             echo "Deploying application using Docker Compose..."
-            docker compose up -d --remove-orphans || docker-compose up -d --remove-orphans
+            docker compose up -d --remove-orphans
 
             echo "Deployment completed successfully."
