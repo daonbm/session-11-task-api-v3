@@ -88,7 +88,7 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           source: "docker-compose.yml,src/main/resources/db/taskdb.sql"
-          target: "~/app"
+          target: "app"
 
       - name: Deploy via Docker Compose SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -112,7 +112,7 @@ jobs:
 
             cd ~/app
 
-            echo "Generating .env file for Docker Compose..."
+            echo "Generating .env file..."
             cat << EOF > .env
             DB_NAME=$DB_NAME
             DB_URL=$DB_URL
