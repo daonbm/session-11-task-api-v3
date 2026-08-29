@@ -34,7 +34,7 @@ COPY --from=builder --chown=daonbm:daonbmgroup /app/build/libs/*.jar app.jar
 USER daonbm
 
 # Expose application port
-EXPOSE 8083
+EXPOSE 8080
 
 # Recommended JVM flags for containerized environment
 ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]
