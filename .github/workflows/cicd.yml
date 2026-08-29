@@ -122,6 +122,9 @@ jobs:
             APP_IMAGE=$DOCKER_USER/task-app:latest
             EOF
 
+            echo "Stopping old containers..."
+            docker compose down --remove-orphans || true
+
             echo "Pulling latest Docker image..."
             docker compose pull
 
