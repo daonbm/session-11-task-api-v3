@@ -1,4 +1,4 @@
-name: CI/CD Pipeline in Spring Boot App
+name: CI/CD Pipeline
 
 on:
   push:
